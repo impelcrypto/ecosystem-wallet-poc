@@ -64,7 +64,6 @@ export function Transfer(): JSX.Element {
       sendTransaction({ to: toAddress, value: parseEther(String(amount)) });
     } catch (error) {
       console.error(error);
-      // openNotification("topRight", "Error", error.message);
     }
   };
 
@@ -104,7 +103,8 @@ export function Transfer(): JSX.Element {
     const disconnectIfNeeded = async () => {
       if (thirdwebWallet && wagmiAccount.status === "disconnected") {
         console.log("disconnect?");
-        await thirdwebWallet.disconnect();
+        // Fixme: Ecosystem wallet will be disconnected due to it's not acknowledged by wagmi
+        // await thirdwebWallet.disconnect();
       }
     };
     disconnectIfNeeded();
