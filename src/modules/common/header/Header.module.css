@@ -1,0 +1,13 @@
+/* @custom-media --breakpoint-sm-min only screen and (min-width: 430px); */
+/* @custom-media --breakpoint-md-min only screen and (min-width: 768px); */
+
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.connectButton {
+  width: 2rem;
+  padding: 0;
+}
