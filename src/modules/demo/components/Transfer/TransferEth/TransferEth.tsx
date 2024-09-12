@@ -113,6 +113,15 @@ export function TransferEth(): JSX.Element {
           {isPending ? "Confirming..." : `Send ${bal?.symbol}`}
         </button>
       </div>
+      <div className={styles.linkUsdcFaucet}>
+        <a
+          href="https://cloud.google.com/application/web3/faucet/ethereum/sepolia"
+          target="_blank"
+          rel="noreferrer"
+        >
+          sETH Faucet
+        </a>
+      </div>
     </div>
   );
 }
