@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/modules/common/header/Header";
-import { WagmiProviders } from "@/modules/wagmi/components/WagmiProvider/WagmiProvider";
+import { ThirdwebSdkProviders } from "@/modules/thirdweb/components/ThirdwebSdkProviders/ThirdwebSdkProviders";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,10 +21,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         {/* Memo: Adding ThirdwebProvider makes the app slow in reflecting the changes */}
-        <WagmiProviders>
+        <ThirdwebSdkProviders>
+          <Toaster position="top-right" reverseOrder={false} />
           <Header />
           <div>{children}</div>
-        </WagmiProviders>
+        </ThirdwebSdkProviders>
       </body>
     </html>
   );
