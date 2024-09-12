@@ -26,7 +26,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/modules/demo/components/**/*"  // Added this line
   ],
   "exclude": ["node_modules"]
 }

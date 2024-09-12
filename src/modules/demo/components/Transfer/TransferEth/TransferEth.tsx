@@ -1,24 +1,24 @@
 "use client";
 
+import { SEPOLIA_TESTNET } from "@/modules/chains/constants";
+import { useThirdwebContext } from "@/modules/thirdweb/context/useThirdwebContext";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { viemAdapter } from "thirdweb/adapters/viem";
 import { sepolia } from "thirdweb/chains";
 import { useActiveAccount, useWalletBalance } from "thirdweb/react";
-import { type Address, type PublicClient, type WalletClient, parseEther } from "viem";
+import { parseEther } from "viem";
 import styles from "../Transfer.module.css";
 
-interface Props {
-  client: any;
-  walletAddress: Address;
-  publicClient: PublicClient;
-  walletClient: WalletClient;
-}
-
-export function TransferEth({ client, walletAddress, publicClient }: Props): JSX.Element {
+export function TransferEth(): JSX.Element {
   const activeAccount = useActiveAccount();
+  const walletAddress = activeAccount?.address;
+
+  const {
+    state: { client, publicClient, walletClient },
+  } = useThirdwebContext();
+
   const [isPending, setIsPending] = useState(false);
-  const { data: bal, isLoading } = useWalletBalance({
+  const { data: bal } = useWalletBalance({
     client,
     address: walletAddress,
     chain: sepolia,
@@ -28,14 +28,6 @@ export function TransferEth({ client, walletAddress, publicClient }: Props): JSX
   const inputAddressRef = useRef<HTMLInputElement>(null);
   const inputAmountRef = useRef<HTMLInputElement>(null);
   const [amount, setAmount] = useState<number>(0);
-
-  const walletClient = activeAccount
-    ? viemAdapter.walletClient.toViem({
-        account: activeAccount,
-        client,
-        chain: sepolia,
-      })
-    : undefined;
 
   function resetStates(): void {
     setAmount(0);
@@ -57,7 +49,7 @@ export function TransferEth({ client, walletAddress, publicClient }: Props): JSX
         account: activeAccount?.address,
         to: toAddress,
         value: parseEther(String(amount)),
-        chain: sepolia as any,
+        chain: SEPOLIA_TESTNET,
       });
       await publicClient.waitForTransactionReceipt({
         hash,

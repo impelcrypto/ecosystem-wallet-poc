@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/modules/common/header/Header";
-import { ThirdwebSdkProviders } from "@/modules/thirdweb/components/ThirdwebSdkProviders/ThirdwebSdkProviders";
+import { ThirdwebContextProvider } from "@/modules/thirdweb/context/useThirdwebContext";
 import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,12 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* Memo: Adding ThirdwebProvider makes the app slow in reflecting the changes */}
-        <ThirdwebSdkProviders>
-          <Toaster position="top-right" reverseOrder={false} />
-          <Header />
-          <div>{children}</div>
-        </ThirdwebSdkProviders>
+        <ThirdwebContextProvider>
+          <>
+            <Toaster position="top-right" reverseOrder={false} />
+            <Header />
+            <div>{children}</div>
+          </>
+        </ThirdwebContextProvider>
       </body>
     </html>
   );

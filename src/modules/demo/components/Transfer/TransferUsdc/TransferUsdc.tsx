@@ -1,27 +1,26 @@
 "use client";
 
+import { useThirdwebContext } from "@/modules/thirdweb/context/useThirdwebContext";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { viemAdapter } from "thirdweb/adapters/viem";
 import { sepolia } from "thirdweb/chains";
 import { useActiveAccount, useWalletBalance } from "thirdweb/react";
-import { type Address, type PublicClient, type WalletClient, erc20Abi, parseUnits } from "viem";
+import { erc20Abi, parseUnits } from "viem";
 import styles from "../Transfer.module.css";
-
-interface Props {
-  client: any;
-  walletAddress: Address;
-  publicClient: any;
-  walletClient: WalletClient;
-}
 
 const usdcContractAddress = {
   sepolia: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
 };
 
-export function TransferUsdc({ client, walletAddress, publicClient }: Props): JSX.Element {
+export function TransferUsdc(): JSX.Element {
   const activeAccount = useActiveAccount();
+  const walletAddress = activeAccount?.address;
   const [isPending, setIsPending] = useState(false);
+
+  const {
+    state: { client, publicClient, walletClient },
+  } = useThirdwebContext();
+
   const { data: bal } = useWalletBalance({
     client,
     address: walletAddress,
@@ -33,14 +32,6 @@ export function TransferUsdc({ client, walletAddress, publicClient }: Props): JS
   const inputAddressRef = useRef<HTMLInputElement>(null);
   const inputAmountRef = useRef<HTMLInputElement>(null);
   const [amount, setAmount] = useState<number>(0);
-
-  const walletClient = activeAccount
-    ? viemAdapter.walletClient.toViem({
-        account: activeAccount,
-        client,
-        chain: sepolia,
-      })
-    : undefined;
 
   function resetStates(): void {
     setAmount(0);
@@ -78,6 +69,8 @@ export function TransferUsdc({ client, walletAddress, publicClient }: Props): JS
       await publicClient.waitForTransactionReceipt({
         hash: hash,
       });
+
+      resetStates();
 
       return hash;
     } catch (error) {
