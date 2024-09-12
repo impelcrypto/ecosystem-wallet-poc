@@ -1,11 +1,12 @@
 "use client";
 
+import { MINATO_TW } from "@/modules/chains/constants";
 import { useThirdwebContext } from "@/modules/thirdweb/context/useThirdwebContext";
 import { useEffect } from "react";
 import { viemAdapter } from "thirdweb/adapters/viem";
 import { sepolia } from "thirdweb/chains";
 import { ConnectButton, useActiveAccount } from "thirdweb/react";
-import { ecosystemWallet } from "thirdweb/wallets";
+import { createWallet, ecosystemWallet } from "thirdweb/wallets";
 import type { WalletClient } from "viem";
 import styles from "./Header.module.css";
 
@@ -34,7 +35,7 @@ export function Header(): JSX.Element {
   useEffect(() => {
     if (!walletClient) return;
     setWalletClient(walletClient as WalletClient);
-  }, [setWalletClient, walletClient]);
+  }, [walletClient, setWalletClient]);
 
   return (
     <header className={styles.container}>
@@ -42,7 +43,12 @@ export function Header(): JSX.Element {
         <span>Thirdweb Ecosystem Wallet Demo</span>
       </div>
       <div>
-        <ConnectButton client={client} wallets={[wallet]} chain={sepolia} />
+        <ConnectButton
+          client={client}
+          wallets={[wallet, createWallet("io.metamask")]}
+          // chain={sepolia}
+          chains={[sepolia, MINATO_TW]}
+        />
       </div>
     </header>
   );

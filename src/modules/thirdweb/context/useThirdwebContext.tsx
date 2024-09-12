@@ -77,9 +77,13 @@ const ThirdwebContextProvider = ({
     dispatch({ type: ThirdwebContext.SetPublicClient, payload: publicClient });
   }, []);
 
-  const setWalletClient = useCallback((walletClient: WalletClient) => {
-    dispatch({ type: ThirdwebContext.SetWalletClient, payload: walletClient });
-  }, []);
+  const setWalletClient = useCallback(
+    (walletClient: WalletClient) => {
+      if (state.walletClient?.account?.address === walletClient.account?.address) return;
+      dispatch({ type: ThirdwebContext.SetWalletClient, payload: walletClient });
+    },
+    [state.walletClient?.account?.address],
+  );
 
   const contextValue: ContextType = useMemo(
     () => ({

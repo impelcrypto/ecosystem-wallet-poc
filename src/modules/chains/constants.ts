@@ -1,3 +1,4 @@
+import { defineChain } from "thirdweb";
 import { type Chain, sepolia } from "viem/chains";
 
 export const RPC_URL = {
@@ -43,3 +44,18 @@ export enum ChainId {
   Sepolia = 11155111,
   Minato = 1946,
 }
+
+export const MINATO_TW = defineChain({
+  id: 1946,
+  name: "MINATO",
+  nativeCurrency: { name: "Sepolia Ether", symbol: "ETH", decimals: 18 },
+  blockExplorers: [
+    {
+      name: "Blockscout",
+      url: "https://explorer-testnet.soneium.org",
+      apiUrl: "https://explorer-testnet.soneium.org/api",
+    },
+  ],
+  testnet: true,
+  rpcUrls: RPC_URL.minato,
+});
