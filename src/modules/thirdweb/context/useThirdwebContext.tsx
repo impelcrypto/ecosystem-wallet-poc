@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  type Dispatch,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer,
-} from "react";
+import { type Dispatch, createContext, useCallback, useContext, useMemo, useReducer } from "react";
 import { type ThirdwebClient, createThirdwebClient } from "thirdweb";
-import { viemAdapter } from "thirdweb/adapters/viem";
-import { sepolia } from "thirdweb/chains";
 import { ThirdwebProvider } from "thirdweb/react";
 import type { PublicClient, WalletClient } from "viem";
 
@@ -94,14 +84,6 @@ const ThirdwebContextProvider = ({
     }),
     [state, setPublicClient, setWalletClient],
   );
-
-  useEffect(() => {
-    const publicClient = viemAdapter.publicClient.toViem({
-      chain: sepolia,
-      client: state.client,
-    }) as PublicClient;
-    setPublicClient(publicClient);
-  }, [state.client, setPublicClient]);
 
   return (
     <ThirdwebSdkProvider.Provider value={contextValue}>

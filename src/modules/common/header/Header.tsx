@@ -5,9 +5,9 @@ import { useThirdwebContext } from "@/modules/thirdweb/context/useThirdwebContex
 import { useEffect } from "react";
 import { viemAdapter } from "thirdweb/adapters/viem";
 import { sepolia } from "thirdweb/chains";
-import { ConnectButton, useActiveAccount } from "thirdweb/react";
+import { ConnectButton, useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 import { createWallet, ecosystemWallet } from "thirdweb/wallets";
-import type { WalletClient } from "viem";
+import type { PublicClient, WalletClient } from "viem";
 import styles from "./Header.module.css";
 
 const ecosystemId = String(process.env.NEXT_PUBLIC_ECOSYSTEM_ID) as `ecosystem.${string}`;
@@ -17,25 +17,36 @@ export function Header(): JSX.Element {
   const {
     state: { client },
     setWalletClient,
+    setPublicClient,
   } = useThirdwebContext();
   const activeAccount = useActiveAccount();
+  const activeChain = useActiveWalletChain();
 
   const wallet = ecosystemWallet(ecosystemId, {
     partnerId,
   });
 
-  const walletClient = activeAccount
-    ? viemAdapter.walletClient.toViem({
-        account: activeAccount,
-        client,
-        chain: sepolia,
-      })
-    : undefined;
+  const walletClient =
+    activeAccount && activeChain
+      ? viemAdapter.walletClient.toViem({
+          account: activeAccount,
+          client,
+          chain: activeChain,
+        })
+      : undefined;
 
   useEffect(() => {
     if (!walletClient) return;
     setWalletClient(walletClient as WalletClient);
   }, [walletClient, setWalletClient]);
+
+  useEffect(() => {
+    const publicClient = viemAdapter.publicClient.toViem({
+      chain: activeChain === undefined ? sepolia : activeChain,
+      client: client,
+    }) as PublicClient;
+    setPublicClient(publicClient);
+  }, [client, setPublicClient, activeChain]);
 
   return (
     <header className={styles.container}>
@@ -46,8 +57,8 @@ export function Header(): JSX.Element {
         <ConnectButton
           client={client}
           wallets={[wallet, createWallet("io.metamask")]}
-          // chain={sepolia}
           chains={[sepolia, MINATO_TW]}
+          theme="dark"
         />
       </div>
     </header>

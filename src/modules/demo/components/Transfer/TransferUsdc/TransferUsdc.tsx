@@ -4,18 +4,20 @@ import { useThirdwebContext } from "@/modules/thirdweb/context/useThirdwebContex
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { sepolia } from "thirdweb/chains";
-import { useActiveAccount, useWalletBalance } from "thirdweb/react";
+import { useActiveAccount, useActiveWalletChain, useWalletBalance } from "thirdweb/react";
 import { erc20Abi, parseUnits } from "viem";
 import styles from "../Transfer.module.css";
 
 const usdcContractAddress = {
   sepolia: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+  minato: "0xE9A198d38483aD727ABC8b0B1e16B2d338CF0391",
 };
 
 export function TransferUsdc(): JSX.Element {
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
   const [isPending, setIsPending] = useState(false);
+  const activeChain = useActiveWalletChain();
 
   const {
     state: { client, publicClient, walletClient },
@@ -24,8 +26,9 @@ export function TransferUsdc(): JSX.Element {
   const { data: bal } = useWalletBalance({
     client,
     address: walletAddress,
-    chain: sepolia,
-    tokenAddress: usdcContractAddress.sepolia,
+    chain: activeChain,
+    tokenAddress:
+      activeChain?.name === "MINATO" ? usdcContractAddress.minato : usdcContractAddress.sepolia,
   });
 
   const [toAddress, setToAddress] = useState<string>("");
@@ -94,7 +97,7 @@ export function TransferUsdc(): JSX.Element {
         <span>Token: USDC</span>
       </div>
       <div>
-        <span>Balance: {Number(bal?.displayValue).toFixed(3)} USDC</span>
+        <span>Balance: {Number(Number(bal?.displayValue).toFixed(3))} USDC</span>
       </div>
       <div>
         <div className={styles.inputRow}>

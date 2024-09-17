@@ -1,17 +1,16 @@
 "use client";
 
-import { SEPOLIA_TESTNET } from "@/modules/chains/constants";
 import { useThirdwebContext } from "@/modules/thirdweb/context/useThirdwebContext";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { sepolia } from "thirdweb/chains";
-import { useActiveAccount, useWalletBalance } from "thirdweb/react";
+import { useActiveAccount, useActiveWalletChain, useWalletBalance } from "thirdweb/react";
 import { parseEther } from "viem";
 import styles from "../Transfer.module.css";
 
 export function TransferEth(): JSX.Element {
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
+  const activeChain = useActiveWalletChain();
 
   const {
     state: { client, publicClient, walletClient },
@@ -21,7 +20,7 @@ export function TransferEth(): JSX.Element {
   const { data: bal } = useWalletBalance({
     client,
     address: walletAddress,
-    chain: sepolia,
+    chain: activeChain,
   });
 
   const [toAddress, setToAddress] = useState<string>("");
@@ -41,21 +40,23 @@ export function TransferEth(): JSX.Element {
   }
 
   async function sendNativeToken() {
-    if (!walletClient || !publicClient || !activeAccount) return;
+    if (!walletClient || !publicClient || !activeAccount || activeChain === undefined) return;
 
     try {
       setIsPending(true);
-      const hash = await walletClient.sendTransaction({
+      const tx = {
         account: activeAccount?.address,
         to: toAddress,
         value: parseEther(String(amount)),
-        chain: SEPOLIA_TESTNET,
-      });
+        chain: activeChain,
+      };
+      // @ts-ignore
+      const hash = await walletClient.sendTransaction(tx);
       await publicClient.waitForTransactionReceipt({
         hash,
       });
       resetStates();
-      return hash;
+      return "";
     } catch (error) {
       console.error(error);
     } finally {
@@ -77,7 +78,7 @@ export function TransferEth(): JSX.Element {
         <span>Token: ETH</span>
       </div>
       <div>
-        <span>Balance: {Number(bal?.displayValue).toFixed(3)} ETH</span>
+        <span>Balance: {Number(Number(bal?.displayValue).toFixed(3))} ETH</span>
       </div>
       <div>
         <div className={styles.inputRow}>
