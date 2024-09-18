@@ -36,6 +36,7 @@ export function Header(): JSX.Element {
       : undefined;
 
   useEffect(() => {
+    console.log("env", process.env.NEXT_PUBLIC_PARTNER_ID);
     if (!walletClient) return;
     setWalletClient(walletClient as WalletClient);
   }, [walletClient, setWalletClient]);
