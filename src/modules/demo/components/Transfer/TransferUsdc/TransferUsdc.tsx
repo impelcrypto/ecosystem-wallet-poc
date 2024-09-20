@@ -3,7 +3,6 @@
 import { useThirdwebContext } from "@/modules/thirdweb/context/useThirdwebContext";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { sepolia } from "thirdweb/chains";
 import { useActiveAccount, useActiveWalletChain, useWalletBalance } from "thirdweb/react";
 import { erc20Abi, parseUnits } from "viem";
 import styles from "../Transfer.module.css";
